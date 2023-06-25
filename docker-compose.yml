@@ -13,7 +13,7 @@ services:
       SERVICE_TAGS: dev
     working_dir: /var/www
     ports:
-      - "9091:9000"
+      - "9092:9000"
     volumes:
       - ../spoonbender-app/:/var/www
       - ./config/php/local.ini:/usr/local/etc/php/conf.d/local.ini
@@ -28,8 +28,8 @@ services:
     restart: unless-stopped
     tty: true
     ports:
-      - "8081:80"
-      - "44444:443"
+      - "8082:80"
+      - "44445:443"
     volumes:
       - ../spoonbender-app:/var/www
       - ./config/nginx/conf.d/:/etc/nginx/conf.d/
@@ -56,7 +56,7 @@ services:
   spoonbender-db:
     container_name: spoonbender-db
     ports:
-      - 33067:3306
+      - 33068:3306
     image: mariadb:latest
     restart: always
     environment:
@@ -102,7 +102,7 @@ services:
     profiles:
       - testing
     ports:
-      - 4446:4444
+      - 4447:4444
 
 #Docker Networks
 networks:
