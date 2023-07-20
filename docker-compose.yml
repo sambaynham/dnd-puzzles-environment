@@ -46,6 +46,7 @@ services:
       - ../spoonbender-app:/app
   #Node
   spoonbender-node:
+    restart: 'no'
     image: node:14
     command: bash -c "npm install && npm run watch"
     working_dir: /app
