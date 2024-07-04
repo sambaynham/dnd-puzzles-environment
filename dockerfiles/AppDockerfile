@@ -3,7 +3,10 @@ FROM dunglas/frankenphp
 #1 Set working directory
 WORKDIR /var/www
 
-#2 Install extensions
+#2 CertUtil
+RUN apt update && apt install libnss3-tools -y;
+
+#3 Install extensions
 RUN install-php-extensions \
     pdo_mysql \
     	gd \
@@ -11,21 +14,17 @@ RUN install-php-extensions \
     	zip \
     	opcache
 
-#5 Add user for application
+#4 Add user for application
 RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www
 
 COPY --chown=www:www ./Caddyfile /etc/Caddyfile
 
-#7 Copy existing application directory permissions
+#5 Copy existing application directory permissions
 COPY --chown=www:www . /app/public
-ENV COMPOSER_ALLOW_SUPERUSER 1
+
 ENV XDEBUG_MODE coverage
-ENV SYMFONY_DEPRECATIONS_HELPER disabled
 
-#8
-# Change current user to www
+
+#6 Change current user to www
 USER www
-
-#10 Expose port 9000 and start php-fpm server
-EXPOSE 9000
