@@ -13,29 +13,32 @@ services:
       SERVICE_TAGS: dev
     working_dir: /var/www
     ports:
-      - "9092:9000"
+      - "8084:80"
+      - "8443:443"
     volumes:
       - ../spoonbender-app/:/var/www
-      - ./config/php/local.ini:/usr/local/etc/php/conf.d/local.ini
       - ./logs/php:/var/log/php/
+      - ./data/caddy:/data
+      - ./config/caddy:/config
     networks:
       - spoonbender-network
 
+
   #Nginx Service
-  spoonbender-nginx:
-    image: nginx:alpine
-    container_name: spoonbender-nginx
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "8082:80"
-      - "44445:443"
-    volumes:
-      - ../spoonbender-app:/var/www
-      - ./config/nginx/conf.d/:/etc/nginx/conf.d/
-      - ./logs/nginx:/var/log/nginx/
-    networks:
-      - spoonbender-network
+  #spoonbender-nginx:
+  #  image: nginx:alpine
+  #  container_name: spoonbender-nginx
+  #  restart: unless-stopped
+  #  tty: true
+  #  ports:
+  #    - "8082:80"
+  #    - "44445:443"
+  #  volumes:
+  #    - ../spoonbender-app:/var/www
+  #    - ./config/nginx/conf.d/:/etc/nginx/conf.d/
+  #    - ./logs/nginx:/var/log/nginx/
+  #  networks:
+  #    - spoonbender-network
 
   #Composer
   spoonbender-composer:
@@ -104,6 +107,7 @@ services:
       - testing
     ports:
       - 4447:4444
+
 
 #Docker Networks
 networks:

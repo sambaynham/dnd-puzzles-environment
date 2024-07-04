@@ -1,2 +1,4 @@
 logs/*/*.log
 .DS_STORE
+data/*/*
+config/*/*
