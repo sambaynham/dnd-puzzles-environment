@@ -1,86 +1,94 @@
 services:
   #PHP Service
-  credit-app:
+  dnd-puzzles-app:
     build:
       context: .
       dockerfile: dockerfiles/AppDockerfile
-    container_name: credit-app
+    container_name: dnd-puzzles-app
     tty: true
     restart: unless-stopped
     environment:
-      SERVICE_NAME: credit-app
+      SERVICE_NAME: dnd-puzzles-app
       SERVICE_TAGS: dev
     working_dir: /var/www
     ports:
       - "9096:9000"
     volumes:
-      - ../credit-prototype-rules/:/var/www
+      - ../dnd-puzzles-app/:/var/www
       - ./config/php/local.ini:/usr/local/etc/php/conf.d/local.ini
       - ./logs/php:/var/log/php/
     networks:
-      - credit-network
+      - dnd-puzzles-network
 
   #Nginx Service
-  credit-nginx:
+  dnd-puzzles-nginx:
     image: nginx:alpine
-    container_name: credit-nginx
+    container_name: dnd-puzzles-nginx
     restart: unless-stopped
     tty: true
     ports:
-      - "8088:80"
+      - "8089:80"
       - "44455:443"
     volumes:
-      - ../credit-prototype-rules:/var/www
+      - ../dnd-puzzles-app:/var/www
       - ./config/nginx/conf.d/:/etc/nginx/conf.d/
       - ./logs/nginx:/var/log/nginx/
     networks:
-      - credit-network
+      - dnd-puzzles-network
 
   #Composer
-  credit-composer:
+  dnd-puzzles-composer:
     restart: 'no'
     image: composer
     command: install --ignore-platform-reqs --no-scripts
     volumes:
-      - ../credit-prototype-rules:/app
+      - ../dnd-puzzles-app:/app
+
+  #Node
+  dnd-puzzles-node:
+    restart: 'no'
+    image: node:20
+
+    command: bash -c "npm install && npm run build:watch --stats-children"
+    working_dir: /app
+    volumes:
+      - ../dnd-puzzles-app:/app
 
   #MySQL Service
-  credit-db:
-    container_name: credit-db
+  dnd-puzzles-db:
+    container_name: dnd-puzzles-db
     ports:
       - 33375:3306
     image: mariadb:latest
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: "r00t"
-      MYSQL_DATABASE: credit
-      MYSQL_USER: credit-user
+      MYSQL_DATABASE: dnd-puzzles
+      MYSQL_USER: dnd-puzzles-user
       MYSQL_PASSWORD: xH8rWzXQ3Y82RwiWUxudK
 
     volumes:
-      - credit-dbdata:/var/lib/mysql/
+      - dnd-puzzles-dbdata:/var/lib/mysql/
       - ./logs/mysql:/var/log/mysql
       - ./config/mysql/my.cnf:/etc/mysql/my.cnf
     networks:
-      - credit-network
+      - dnd-puzzles-network
 
   #Memcached
-  credit-memcached:
+  dnd-puzzles-memcached:
     image: memcached
     ports:
-      - 61212:11211
+      - 61213:11211
 
     command: memcached -m 1024m
 
-
-
 #Docker Networks
 networks:
-  credit-network:
+  dnd-puzzles-network:
     driver: bridge
 
 #Volumes
 volumes:
 
-  credit-dbdata:
+  dnd-puzzles-dbdata:
     driver: local
