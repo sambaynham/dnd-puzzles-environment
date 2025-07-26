@@ -1,2 +1,2 @@
-# spoonbender-environment
-Environment for spoonbender
+# dnd-puzzles-environment
+Environment for dnd-puzzles
