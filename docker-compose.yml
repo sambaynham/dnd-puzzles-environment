@@ -58,7 +58,7 @@ services:
   dnd-puzzles-db:
     container_name: dnd-puzzles-db
     ports:
-      - 33375:3306
+      - 33377:3306
     image: mariadb:latest
     restart: always
     environment:
