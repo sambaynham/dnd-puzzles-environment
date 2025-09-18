@@ -1,6 +1,7 @@
 services:
   #PHP Service
   dnd-puzzles-app:
+    env_file: ".env"
     build:
       context: .
       dockerfile: dockerfiles/AppDockerfile
@@ -22,6 +23,7 @@ services:
 
   #Nginx Service
   dnd-puzzles-nginx:
+    env_file: ".env"
     image: nginx:alpine
     container_name: dnd-puzzles-nginx
     restart: unless-stopped
@@ -38,6 +40,7 @@ services:
 
   #Composer
   dnd-puzzles-composer:
+    env_file: ".env"
     restart: 'no'
     image: composer
     command: install --ignore-platform-reqs --no-scripts
@@ -46,6 +49,7 @@ services:
 
   #Node
   dnd-puzzles-node:
+    env_file: ".env"
     restart: 'no'
     image: node:20
 
@@ -56,6 +60,7 @@ services:
 
   #MySQL Service
   dnd-puzzles-db:
+    env_file: ".env"
     container_name: dnd-puzzles-db
     ports:
       - 33377:3306
@@ -76,6 +81,7 @@ services:
 
   #Memcached
   dnd-puzzles-redis:
+    env_file: ".env"
     image: redis:8.2-alpine
     restart: always
     ports:
