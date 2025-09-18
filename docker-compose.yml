@@ -65,7 +65,7 @@ services:
       MYSQL_ROOT_PASSWORD: "r00t"
       MYSQL_DATABASE: dnd-puzzles
       MYSQL_USER: dnd-puzzles-user
-      MYSQL_PASSWORD: xH8rWzXQ3Y82RwiWUxudK
+      MYSQL_PASSWORD: "y2iomm9lw0SO"
 
     volumes:
       - dnd-puzzles-dbdata:/var/lib/mysql/
@@ -75,12 +75,14 @@ services:
       - dnd-puzzles-network
 
   #Memcached
-  dnd-puzzles-memcached:
-    image: memcached
+  dnd-puzzles-redis:
+    image: redis:8.2-alpine
+    restart: always
     ports:
-      - 61213:11211
-
-    command: memcached -m 1024m
+      - '63799:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes:
+      - dnd-puzzles-cache:/data
 
 #Docker Networks
 networks:
@@ -89,6 +91,7 @@ networks:
 
 #Volumes
 volumes:
-
   dnd-puzzles-dbdata:
+    driver: local
+  dnd-puzzles-cache:
     driver: local
