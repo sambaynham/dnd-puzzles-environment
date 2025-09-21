@@ -87,12 +87,12 @@ services:
 
   #RabbitMQ
   dnd-puzzles-rabbitmq:
-    image: rabbitmq:latest
-    container_name: dnd-puzzles-rabbitmq
+    image: rabbitmq:3-management
+
     restart: always
     ports:
-      - 5672:5672
-      - 15672:15672
+      - 56722:5672
+      - 25672:15672
     environment:
       RABBITMQ_DEFAULT_USER: kalo
       RABBITMQ_DEFAULT_PASS: kalo
@@ -102,6 +102,8 @@ services:
     volumes:
       - rabbitmq-lib:/var/lib/rabbitmq/
       - ./logs/rabbitmq:/var/log/rabbitmq
+    networks:
+      - dnd-puzzles-network
 
 configs:
   rabbitmq-plugins:

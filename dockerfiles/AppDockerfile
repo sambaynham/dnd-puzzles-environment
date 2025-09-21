@@ -57,7 +57,7 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 
 RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
     install-php-extensions amqp
-    
+
 #5 Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
