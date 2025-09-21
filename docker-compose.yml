@@ -66,11 +66,6 @@ services:
       - 33377:3306
     image: mariadb:latest
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: "r00t"
-      MYSQL_DATABASE: dnd-puzzles
-      MYSQL_USER: dnd-puzzles-user
-      MYSQL_PASSWORD: "y2iomm9lw0SO"
 
     volumes:
       - dnd-puzzles-dbdata:/var/lib/mysql/
@@ -79,7 +74,7 @@ services:
     networks:
       - dnd-puzzles-network
 
-  #Memcached
+  #Redis
   dnd-puzzles-redis:
     env_file: ".env"
     image: redis:8.2-alpine
@@ -89,6 +84,28 @@ services:
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     volumes:
       - dnd-puzzles-cache:/data
+
+  #RabbitMQ
+  dnd-puzzles-rabbitmq:
+    image: rabbitmq:latest
+    container_name: dnd-puzzles-rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: kalo
+      RABBITMQ_DEFAULT_PASS: kalo
+    configs:
+      - source: rabbitmq-plugins
+        target: /etc/rabbitmq/enabled_plugins
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq/
+      - ./logs/rabbitmq:/var/log/rabbitmq
+
+configs:
+  rabbitmq-plugins:
+    content: "[rabbitmq_management]."
 
 #Docker Networks
 networks:
@@ -100,4 +117,6 @@ volumes:
   dnd-puzzles-dbdata:
     driver: local
   dnd-puzzles-cache:
+    driver: local
+  rabbitmq-lib:
     driver: local
