@@ -20,6 +20,7 @@ services:
       - ./logs/php:/var/log/php/
     networks:
       - dnd-puzzles-network
+    profiles: [app]
 
   #Nginx Service
   dnd-puzzles-nginx:
@@ -37,6 +38,7 @@ services:
       - ./logs/nginx:/var/log/nginx/
     networks:
       - dnd-puzzles-network
+    profiles: [app]
 
   #Composer
   dnd-puzzles-composer:
@@ -46,7 +48,7 @@ services:
     command: install --ignore-platform-reqs --no-scripts
     volumes:
       - ../dnd-puzzles-app:/app
-
+    profiles: [app]
   #Node
   dnd-puzzles-node:
     env_file: ".env"
@@ -57,7 +59,7 @@ services:
     working_dir: /app
     volumes:
       - ../dnd-puzzles-app:/app
-
+    profiles: [app]
   #MySQL Service
   dnd-puzzles-db:
     env_file: ".env"
@@ -73,7 +75,7 @@ services:
       - ./config/mysql/my.cnf:/etc/mysql/my.cnf
     networks:
       - dnd-puzzles-network
-
+    profiles: [app]
   #Redis
   dnd-puzzles-redis:
     env_file: ".env"
@@ -84,6 +86,7 @@ services:
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     volumes:
       - dnd-puzzles-cache:/data
+    profiles: [app]
 
   #RabbitMQ
   dnd-puzzles-rabbitmq:
@@ -104,10 +107,21 @@ services:
       - ./logs/rabbitmq:/var/log/rabbitmq
     networks:
       - dnd-puzzles-network
+    profiles: [app]
 
+  dnd-puzzles-phpstan:
+    image: ghcr.io/phpstan/phpstan:latest-php8.4
+    volumes:
+      - ../dnd-puzzles-app:/app
+
+    profiles: [preflight]
+    env_file: ".env"
 configs:
   rabbitmq-plugins:
     content: "[rabbitmq_management]."
+
+
+
 
 #Docker Networks
 networks:
