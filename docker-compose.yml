@@ -77,7 +77,8 @@ services:
       - ./config/mysql/my.cnf:/etc/mysql/my.cnf
     networks:
       - dnd-puzzles-network
-    profiles: [app]
+
+    profiles: [app, preflight]
   #Redis
   dnd-puzzles-redis:
     env_file: ".env"
@@ -111,6 +112,7 @@ services:
       - dnd-puzzles-network
     profiles: [app]
 
+#PHPStan
   dnd-puzzles-phpstan:
     image: ghcr.io/phpstan/phpstan:latest-php8.4
     depends_on:
@@ -120,14 +122,12 @@ services:
 
     volumes:
       - ../dnd-puzzles-app:/app
-
+    
     profiles: [preflight]
     env_file: ".env"
 configs:
   rabbitmq-plugins:
     content: "[rabbitmq_management]."
-
-
 
 
 #Docker Networks
