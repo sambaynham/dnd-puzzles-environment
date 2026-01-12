@@ -48,7 +48,8 @@ services:
     command: install --ignore-platform-reqs --no-scripts
     volumes:
       - ../dnd-puzzles-app:/app
-    profiles: [app]
+    profiles: [app, preflight]
+
   #Node
   dnd-puzzles-node:
     env_file: ".env"
@@ -60,6 +61,7 @@ services:
     volumes:
       - ../dnd-puzzles-app:/app
     profiles: [app]
+
   #MySQL Service
   dnd-puzzles-db:
     env_file: ".env"
@@ -111,6 +113,11 @@ services:
 
   dnd-puzzles-phpstan:
     image: ghcr.io/phpstan/phpstan:latest-php8.4
+    depends_on:
+      dnd-puzzles-composer:
+        condition: service_completed_successfully
+        restart: true
+
     volumes:
       - ../dnd-puzzles-app:/app
 
