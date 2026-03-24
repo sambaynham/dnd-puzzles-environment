@@ -21,6 +21,36 @@ services:
     networks:
       - dnd-puzzles-network
     profiles: [app]
+  #Async worker.
+  dnd-puzzles-worker:
+    env_file: ".env"
+    build:
+      context: .
+      dockerfile: dockerfiles/AppDockerfile
+    container_name: dnd-puzzles-worker
+    tty: true
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: dnd-puzzles-worker
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    command: >
+      php bin/console messenger:consume async
+      --memory-limit=256M
+      --no-interaction
+      --verbose
+    volumes:
+      - ../dnd-puzzles-app/:/var/www
+      - ./config/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./logs/php:/var/log/php/
+    networks:
+      - dnd-puzzles-network
+    depends_on:
+      dnd-puzzles-db:
+        condition: service_started
+      dnd-puzzles-rabbitmq:
+        condition: service_healthy
+    profiles: [app]
 
   #Nginx Service
   dnd-puzzles-nginx:
@@ -78,7 +108,7 @@ services:
     networks:
       - dnd-puzzles-network
 
-    profiles: [app, preflight]
+    profiles: [app]
   #Redis
   dnd-puzzles-redis:
     env_file: ".env"
@@ -110,6 +140,12 @@ services:
       - ./logs/rabbitmq:/var/log/rabbitmq
     networks:
       - dnd-puzzles-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
     profiles: [app]
 
 #PHPStan
